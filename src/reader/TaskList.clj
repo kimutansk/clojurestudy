@@ -9,7 +9,14 @@
 	   [org.xml.sax.helpers DefaultHandler]
 	   [javax.xml.parsers SAXParserFactory]))
 
+(defn task-list [filepath]
+  (let [handler (new reader.TaskList)]
+    (.parse (.. SAXParserFactory newInstance new SAXParser)
+           (new InputSource (reader (new File filepath))) handler)
+  @(.state handler)))
+
 (defn -main [& args]
     (doseq [arg args]
-        (println "Received Arg is %s" arg)))
+        (println (task-list arg))))
+
 
