@@ -7,13 +7,6 @@ set CLASS_PATH=%CLOJURE_HOME%\classes
 
 mkdir %CLASS_PATH%
 
-java ^
--cp ^
-%LIB_PATH%\clojure-1.5.1.jar;^
-%LIB_PATH%\clojure-contrib-1.2.0.jar;^
-%LIB_PATH%\criterium-0.4.0.jar;^
-%SRC_PATH%;%CLASS_PATH% ^
-clojure.main
-
+java -jar %LIB_PATH%\clojure-1.5.1.jar
 pause
 
