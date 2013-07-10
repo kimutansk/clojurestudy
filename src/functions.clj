@@ -485,7 +485,7 @@ nil
 user=> (def messages (ref () :validator (every? #(and (:sender %) (:text %)))))
 ArityException Wrong number of args (1) passed to: core$every-QMARK-  clojure.lang.AFn.throwArity (AFn.java:437)
 
-user=> (def messages (ref () :validator #(every? #(and (:sender %) (:text %)))))
+user=> (def messages (ref () :validator #(every? (and (:sender %) (:text %)))))
 IllegalStateException Nested #()s are not allowed  clojure.lang.LispReader$FnReader.invoke (LispReader.java:638)
 
 CompilerException java.lang.RuntimeException: Can't take value of a macro: #'clojure.core/and, compiling:(NO_SOURCE_PATH:0:0) 
@@ -599,6 +599,7 @@ user=> (defn add-message-update (new user.MessageText "User1" "Message1"))
 IllegalArgumentException Parameter declaration new should be a vector  clojure.core/assert-valid-fdecl (core.clj:6732)
 
 user=> (defrecord MessageText [sender message])
+user=> (defrecord Message [sender text])
 user.MessageText
 
 user=> (defn add-message-update (new user.MessageText "User1" "Message1"))
@@ -608,3 +609,22 @@ user=> (defn add-message-update (user.MessageText. "User1" "Message1"))
 IllegalArgumentException Parameter declaration user.MessageText. should be a vector  clojure.core/assert-valid-fdecl (core.clj:6732)
 
 user=> 
+
+
+(def validate-message-list
+  (partial every? #(and (:sender %) (:text %))))
+(def current-messages (ref () :validator validate-message-list))
+
+(def message-backup (agent "output/message-backup.clj"))
+
+(defn add-message-with-backup [msg]
+  (dosync 
+    (let [snapshot (commute current-messages conj msg)]
+      (send-off message-backup (fn [filename] (spit filename snapshot) filename)))))
+
+(defn ^:dynamic sleep-double [n]
+  (Thread/sleep 500)
+  (* n 2))
+
+(defn call-sleep-double []
+  (map sleep-double [1 2 1 2 1 2]))

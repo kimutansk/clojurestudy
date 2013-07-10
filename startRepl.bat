@@ -7,6 +7,8 @@ set CLASS_PATH=%CLOJURE_HOME%\classes
 
 mkdir %CLASS_PATH%
 
-java -jar %LIB_PATH%\clojure-1.5.1.jar
+echo %LIB_PATH%
+
+java -classpath %LIB_PATH%\* clojure.main
 pause
 
