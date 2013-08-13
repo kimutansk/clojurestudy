@@ -1,6 +1,6 @@
-(ns ClojureStudy.core)
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+
+(defprotocol Filter
+  (init-filter [filter])
+  (filter-output-stream [filter])
+  (filter-input-stream [filter]))
